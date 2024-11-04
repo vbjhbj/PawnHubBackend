@@ -48,7 +48,7 @@ return new class extends Migration
 			$table->timestamp('startDate');
 			$table->timestamp('expDate');
 			$table->integer('givenAmount');
-			$table->float('interest', precision:8)
+			$table->float('interest', precision:8);
         });
 		
 		Schema::create('transactions', function (Blueprint $table) {
