@@ -15,13 +15,14 @@ return new class extends Migration
 		Schema::dropIfExists('password_reset_tokens');
 		Schema::dropIfExists('personal_access_tokens');
 		Schema::dropIfExists('users');
+        Schema::dropIfExists('deletedusers');
 		Schema::create('users', function (Blueprint $table) {
 			$table->id();
 			$table->string('username');
 			$table->string('Password');
-			$table->timestamp('lastTransaction');
+			$table->timestamp('lastTransaction')->useCurrent();
 			$table->string('idCardNum');
-			$table->timestamp('idCardExp');
+			$table->timestamp('idCardExp')->useCurrent();
 			$table->string('taxId');
 			$table->string('bankCardNum');
 			$table->string('bankCardExpDate');
@@ -36,7 +37,7 @@ return new class extends Migration
 		});
 		Schema::create('deletedUsers', function (Blueprint $table) {
 			$table->id();
-			$table->timestamp('lastTransaction');
+			$table->timestamp('lastTransaction')->useCurrent();
 			$table->string('iban');
 			$table->string('name');
             $table->timestamps();
@@ -45,8 +46,8 @@ return new class extends Migration
 			$table->id();
 			$table->foreignId('customerId');
 			$table->foreignId('shopId');
-			$table->timestamp('startDate');
-			$table->timestamp('expDate');
+			$table->timestamp('startDate')->useCurrent();
+			$table->timestamp('expDate')->useCurrent();
 			$table->integer('givenAmount');
 			$table->float('interest', precision:8);
         });
