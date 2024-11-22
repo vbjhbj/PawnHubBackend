@@ -16,21 +16,47 @@ return new class extends Migration
 		Schema::dropIfExists('personal_access_tokens');
 		Schema::dropIfExists('users');
         Schema::dropIfExists('deletedusers');
+		Schema::dropIfExists('shops');
+		Schema::dropIfExists('customers');
+		Schema::dropIfExists('loans');
+		Schema::dropIfExists('transactions');
+		Schema::dropIfExists('messages');
+		Schema::dropIfExists('categories');
+		Schema::dropIfExists('categoryGroups');
+		Schema::dropIfExists('items');
 		Schema::create('users', function (Blueprint $table) {
 			$table->id();
 			$table->string('username');
 			$table->string('Password');
 			$table->timestamp('lastTransaction')->useCurrent();
-			$table->string('idCardNum');
-			$table->timestamp('idCardExp')->useCurrent();
 			$table->string('taxId');
+			$table->string('iban');
+			$table->string('imgUrl');
+			$table->timestamps();
+		});
+		Schema::create('shops', function (Blueprint $table) {
+			$table->id();
+			$table->string('name');
+			$table->string('taxId');
+			$table->string('iban');
+			$table->string('mobile');
+			$table->string('email');
+			$table->integer('userId');
+			$table->integer('estYear');
+			$table->timestamps();
+		});
+		Schema::create('customers', function (Blueprint $table) {
+			$table->id();
+			$table->string('name');
+			$table->string('idCardNum');
+			$table->timestamp('birthday')->useCurrent();
+			$table->timestamp('idCardExp')->useCurrent();
+			$table->integer('userId');
 			$table->string('bankCardNum');
 			$table->string('bankCardExpDate');
 			$table->string('bankCardName');
-			$table->string('iban');
 			$table->string('shippingAddress');
 			$table->string('billingAddress');
-			$table->string('name');
 			$table->string('mobile');
 			$table->string('email');
 			$table->timestamps();
@@ -66,6 +92,7 @@ return new class extends Migration
 			$table->foreignId('recipient');
 			$table->string('subject');
 			$table->string('message');
+			$table->timestamps();
         });
 		Schema::create('categoryGroups', function (Blueprint $table) {
 			$table->id();
@@ -79,6 +106,7 @@ return new class extends Migration
         });
 		Schema::create('items', function (Blueprint $table) {
 			$table->id();
+			$table->string('imgUrl');
 			$table->foreignId('loanId');
 			$table->foreignId('shopId');
 			$table->foreignId('categoryId');
