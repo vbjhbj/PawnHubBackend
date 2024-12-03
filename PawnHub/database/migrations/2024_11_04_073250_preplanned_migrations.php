@@ -97,7 +97,7 @@ return new class extends Migration
 			$table->foreignId('shop_id')->constrained();
 			$table->foreignId('customer_id')->constrained();
 			$table->string('item');
-			$table->integer('givenAmount');
+			$table->integer('money');
 			$table->timestamps();
         });
 		
