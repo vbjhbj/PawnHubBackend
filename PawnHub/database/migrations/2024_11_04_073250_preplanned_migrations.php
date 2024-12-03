@@ -24,6 +24,9 @@ return new class extends Migration
 		Schema::dropIfExists('categories');
 		Schema::dropIfExists('categoryGroups');
 		Schema::dropIfExists('items');
+		Schema::dropIfExists('reviews');
+		Schema::dropIfExists('counties');
+		Schema::dropIfExists('settlements');
 		Schema::create('users', function (Blueprint $table) {
 			$table->id();
 			$table->string('username');
@@ -41,8 +44,9 @@ return new class extends Migration
 			$table->string('iban');
 			$table->string('mobile');
 			$table->string('email');
-			$table->integer('userId');
+			$table->foreignId('user_id')->constrained();
 			$table->integer('estYear');
+			$table->foreignId('settlementId')->constrained();
 			$table->timestamps();
 		});
 		Schema::create('customers', function (Blueprint $table) {
@@ -51,7 +55,7 @@ return new class extends Migration
 			$table->string('idCardNum');
 			$table->timestamp('birthday')->useCurrent();
 			$table->timestamp('idCardExp')->useCurrent();
-			$table->integer('userId');
+			$table->foreignId('user_id')->constrained();
 			$table->string('bankCardNum');
 			$table->string('bankCardExpDate');
 			$table->string('bankCardName');
@@ -61,6 +65,15 @@ return new class extends Migration
 			$table->string('email');
 			$table->timestamps();
 		});
+		Schema::create('reviews', function (Blueprint $table) {
+			$table->id();
+			$table->foreignId('customer_id')->constrained();
+			$table->foreignId('shop_id')->constrained();
+			$table->tinyInteger('rating');
+			$table->text('review');
+			$table->timestamps();
+		});
+
 		Schema::create('deletedUsers', function (Blueprint $table) {
 			$table->id();
 			$table->timestamp('lastTransaction')->useCurrent();
@@ -70,26 +83,27 @@ return new class extends Migration
         });
 		Schema::create('loans', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('customerId');
-			$table->foreignId('shopId');
-			$table->timestamp('startDate')->useCurrent();
+			$table->foreignId('customer_id')->constrained();
+			$table->foreignId('shop_id')->constrained();
 			$table->timestamp('expDate')->useCurrent();
 			$table->integer('givenAmount');
 			$table->float('interest', precision:8);
+			$table->timestamps();
         });
 		
 		Schema::create('transactions', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('seller');
-			$table->foreignId('buyer');
+			$table->foreignId('shop_id')->constrained();
+			$table->foreignId('customer_id')->constrained();
 			$table->string('item');
 			$table->integer('givenAmount');
+			$table->timestamps();
         });
 		
 		Schema::create('messages', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('sender');
-			$table->foreignId('recipient');
+			$table->foreign('sender');
+			$table->foreign('recipient');
 			$table->string('subject');
 			$table->string('message');
 			$table->timestamps();
@@ -101,18 +115,26 @@ return new class extends Migration
 		
 		Schema::create('categories', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('groupId');
+			$table->foreignId('categoryGroups_id')->constrained();
 			$table->string('name');
         });
 		Schema::create('items', function (Blueprint $table) {
 			$table->id();
 			$table->string('imgUrl');
-			$table->foreignId('loanId');
-			$table->foreignId('shopId');
+			$table->foreignId('loan_id')->constrained();
+			$table->foreignId('shop_id')->constrained();
 			$table->foreignId('categoryId');
 			$table->integer('value');
         });
-		
+		Schema::create('counties', function (Blueprint $table) {
+			$table->id();
+			$table->string('county');
+        });
+		Schema::create('settlements', function (Blueprint $table) {
+			$table->id();
+			$table->string('name');
+			$table->string('postalCodes');
+        });
     }
  
     /**
@@ -122,5 +144,21 @@ return new class extends Migration
     {
         Schema::drop('users');
 	    Schema::drop('deletedUsers');
+		Schema::dropIfExists('failed_jobs');
+		Schema::dropIfExists('password_reset_tokens');
+		Schema::dropIfExists('personal_access_tokens');
+		Schema::dropIfExists('users');
+        Schema::dropIfExists('deletedusers');
+		Schema::dropIfExists('shops');
+		Schema::dropIfExists('customers');
+		Schema::dropIfExists('loans');
+		Schema::dropIfExists('transactions');
+		Schema::dropIfExists('messages');
+		Schema::dropIfExists('categories');
+		Schema::dropIfExists('categoryGroups');
+		Schema::dropIfExists('items');
+		Schema::dropIfExists('reviews');
+		Schema::dropIfExists('counties');
+		Schema::dropIfExists('settlements');
     }
 };
