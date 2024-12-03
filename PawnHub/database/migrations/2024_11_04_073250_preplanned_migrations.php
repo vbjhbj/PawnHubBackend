@@ -21,11 +21,11 @@ return new class extends Migration
 		Schema::dropIfExists('loans');
 		Schema::dropIfExists('transactions');
 		Schema::dropIfExists('messages');
-		Schema::dropIfExists('categories');
-		Schema::dropIfExists('categoryGroups');
+		Schema::dropIfExists('types');
+		Schema::dropIfExists('typeGroups');
 		Schema::dropIfExists('items');
 		Schema::dropIfExists('reviews');
-		Schema::dropIfExists('counties');
+		Schema::dropIfExists('holdings');
 		Schema::dropIfExists('settlements');
 		Schema::create('users', function (Blueprint $table) {
 			$table->id();
@@ -71,6 +71,7 @@ return new class extends Migration
 			$table->foreignId('shop_id')->constrained();
 			$table->tinyInteger('rating');
 			$table->text('review');
+			$table->integer('likes');
 			$table->timestamps();
 		});
 
@@ -102,20 +103,22 @@ return new class extends Migration
 		
 		Schema::create('messages', function (Blueprint $table) {
 			$table->id();
-			$table->foreign('sender');
-			$table->foreign('recipient');
+			$table->unsignedBigInteger('sender');
+    		$table->foreign('sender')->references('id')->on('users');
 			$table->string('subject');
 			$table->string('message');
+			$table->unsignedBigInteger('recipient');
+    		$table->foreign('recipient')->references('id')->on('users');
 			$table->timestamps();
         });
-		Schema::create('categoryGroups', function (Blueprint $table) {
+		Schema::create('typeGroups', function (Blueprint $table) {
 			$table->id();
 			$table->string('name');
         });
 		
-		Schema::create('categories', function (Blueprint $table) {
+		Schema::create('types', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('categoryGroups_id')->constrained();
+			$table->foreignId('typeGroup_id')->constrained();
 			$table->string('name');
         });
 		Schema::create('items', function (Blueprint $table) {
@@ -123,17 +126,18 @@ return new class extends Migration
 			$table->string('imgUrl');
 			$table->foreignId('loan_id')->constrained();
 			$table->foreignId('shop_id')->constrained();
-			$table->foreignId('categoryId');
+			$table->foreignId('type_id')->constrained();
 			$table->integer('value');
         });
-		Schema::create('counties', function (Blueprint $table) {
+		Schema::create('holdings', function (Blueprint $table) {
 			$table->id();
-			$table->string('county');
+			$table->string('name');
         });
 		Schema::create('settlements', function (Blueprint $table) {
 			$table->id();
 			$table->string('name');
 			$table->string('postalCodes');
+			$table->foreignId('holding_id')->constrained();
         });
     }
  
@@ -154,11 +158,11 @@ return new class extends Migration
 		Schema::dropIfExists('loans');
 		Schema::dropIfExists('transactions');
 		Schema::dropIfExists('messages');
-		Schema::dropIfExists('categories');
-		Schema::dropIfExists('categoryGroups');
+		Schema::dropIfExists('types');
+		Schema::dropIfExists('typeGroups');
 		Schema::dropIfExists('items');
 		Schema::dropIfExists('reviews');
-		Schema::dropIfExists('counties');
+		Schema::dropIfExists('holdings');
 		Schema::dropIfExists('settlements');
     }
 };
